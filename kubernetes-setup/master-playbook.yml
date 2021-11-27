@@ -25,7 +25,7 @@
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
       state: present
 
-  - name: Install docker and its dependecies
+  - name: Install docker and its dependencies
     apt:
       name: "{{ packages }}"
       state: present
@@ -90,10 +90,10 @@
       daemon_reload: yes
       state: restarted
 
-  - name: reset kubeadm
+  - name: Reset Kubernetes cluster
     command: kubeadm reset -f
 
-  - name: Initialize the Kubernetes cluster using kubeadm
+  - name: Initialize the Kubernetes cluster
     command: kubeadm init --apiserver-advertise-address="192.168.56.10" \
                           --apiserver-cert-extra-sans="192.168.56.10" \
                           --node-name k8s-master \
@@ -105,15 +105,9 @@
       line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
       create: yes
 
-  - name: Restart kubelet
-    service:
-      name: kubelet
-      daemon_reload: yes
-      state: restarted
-
   - name: Create .kube folder
     file:
-      path: "{{ ansible_user }}/.kube"
+      path: "/home/{{ ansible_user }}/.kube"
       state: directory
       owner: "{{ ansible_user }}"
       group: "{{ ansible_user }}"
@@ -122,10 +116,11 @@
   - name: Copy file with owner and permissions
     copy:
       src: /etc/kubernetes/admin.conf
-      dest: "{{ ansible_user }}/.kube/config"
+      dest: "/home/{{ ansible_user }}/.kube/config"
       owner: "{{ ansible_user }}"
       group: "{{ ansible_user }}"
       mode: 0644
+      remote_src: yes
 
   - name: Install calico tigera operator
     become: false
@@ -135,12 +130,18 @@
     become: false
     command: kubectl create -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
 
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+
   - name: Generate join command
     command: kubeadm token create --print-join-command
     register: join_command
 
   - name: Copy join command to local file
-    local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+    action: copy content="{{ join_command.stdout }}" dest="/etc/kubernetes/kubeadm-join.command"
 
   handlers:
     - name: docker status
