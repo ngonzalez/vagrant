@@ -1,6 +1,6 @@
 # vagrant
 
-<p><img src="https://user-images.githubusercontent.com/26479/143664590-dc1934a6-ea33-437b-8781-cb021a76cad9.png" width="500" /></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Vagrant.png/440px-Vagrant.png" width="200" /></p>
 
 <ul>
   <li>
