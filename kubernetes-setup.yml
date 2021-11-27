@@ -90,20 +90,26 @@
       daemon_reload: yes
       state: restarted
 
+  - name: Configure kubelet
+    lineinfile:
+      path: /etc/default/kubelet
+      line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+      create: yes
+
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+
   - name: Reset Kubernetes cluster
     command: kubeadm reset -f
 
   - name: Initialize the Kubernetes cluster
     command: kubeadm init --apiserver-advertise-address="192.168.56.10" \
                           --apiserver-cert-extra-sans="192.168.56.10" \
-                          --node-name k8s-master \
+                          --node-name node-1 \
                           --pod-network-cidr=192.168.0.0/16
-
-  - name: Configure node ip
-    lineinfile:
-      path: /etc/default/kubelet
-      line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
-      create: yes
 
   - name: Create .kube folder
     file:
@@ -122,26 +128,19 @@
       mode: 0644
       remote_src: yes
 
-  - name: Install calico tigera operator
+  # By default, your cluster will not schedule Pods on the control-plane node for security reasons
+  # https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+  - name: Taint node
+    command: kubectl taint nodes --all node-role.kubernetes.io/master-
     become: false
+
+  - name: Install the Tigera Calico operator and custom resource definitions
     command: kubectl create -f https://docs.projectcalico.org/master/manifests/tigera-operator.yaml
-
-  - name: Install calico custom resources
     become: false
+
+  - name: Install Calico by creating the necessary custom resource
     command: kubectl create -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
-
-  - name: Restart kubelet
-    service:
-      name: kubelet
-      daemon_reload: yes
-      state: restarted
-
-  - name: Generate join command
-    command: kubeadm token create --print-join-command
-    register: join_command
-
-  - name: Copy join command to local file
-    action: copy content="{{ join_command.stdout }}" dest="/etc/kubernetes/kubeadm-join.command"
+    become: false
 
   handlers:
     - name: docker status
