@@ -12,9 +12,6 @@ Vagrant.configure('2') do |config|
     master.vm.hostname = 'node-1'
     master.vm.provision 'ansible' do |ansible|
       ansible.playbook = 'playbook.yaml'
-      ansible.extra_vars = {
-        node_ip: '192.168.56.10',
-      }
     end
   end
 end
