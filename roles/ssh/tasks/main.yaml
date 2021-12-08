@@ -1,0 +1,43 @@
+# ssh
+- name: Include ssh vault vars
+  include_vars:
+    file: vault.yaml
+
+- name: Copy ssh key id_rsa
+  copy:
+    content: "{{ mbp_id_rsa }}"
+    dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa
+    mode: 0600
+    owner: "{{ ansible_user }}"
+  no_log: True
+
+- name: Copy ssh key id_rsa.pub
+  copy:
+    content: "{{ mbp_id_rsa_pub }}"
+    dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa.pub
+    mode: 0644
+    owner: "{{ ansible_user }}"
+  no_log: True
+
+- name: Create ssh config
+  file:
+    path: /home/{{ ansible_user }}/.ssh/config
+    state: touch
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Add mbp_id_rsa to ssh config
+  lineinfile:
+    line: " IdentityFile /home/{{ ansible_user }}/.ssh/mbp_id_rsa"
+    dest: /home/{{ ansible_user }}/.ssh/config
+    mode: 0644
+    owner: "{{ ansible_user }}"
+
+- name: Add github to known_hosts
+  lineinfile:
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    dest: /home/{{ ansible_user }}/.ssh/known_hosts
+    mode: 0644
+    owner: "{{ ansible_user }}"
+    create: True
