@@ -149,7 +149,7 @@
       dest: /run/flannel/subnet.env
 
   - name: Apply kube network configuration
-    command: kubectl apply -f https://gist.githubusercontent.com/ngonzalez/d2b04e6b9fc676c0eb6b27a8df37e797/raw/ab2db5b8079621f6bfc22950bc8eb5cf4c9bcce3/kube-flannel.yml
+    command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
     become: false
 
   handlers:
