@@ -12,3 +12,11 @@
     https://docs.projectcalico.org/master/getting-started/kubernetes/quickstart
   </li>
 </ul>
+
+```shell
+vagrant up node-1 --privision
+```
+
+```shell
+vagrant destroy
+```
