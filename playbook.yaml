@@ -1,12 +1,18 @@
 ---
 - hosts: all
   become: true
+
+  handlers:
+    - name: docker status
+      service: name=docker state=started
+
   tasks:
   - name: Install system packages
     apt:
       name:
       - net-tools
       - iputils-ping
+      - dnsutils
       - curl
       - jq
 
@@ -85,13 +91,13 @@
         - kubeadm
         - kubectl
 
-  - name: Configure docker
+  - name: Configure docker daemon
     lineinfile:
       path: /etc/docker/daemon.json
       line: "{ \"exec-opts\": [\"native.cgroupdriver=systemd\"] }"
       create: yes
 
-  - name: Restart docker
+  - name: Start docker service
     service:
       name: docker
       state: restarted
@@ -148,12 +154,66 @@
       src: subnet.env.j2
       dest: /run/flannel/subnet.env
 
-  - name: Apply kube network configuration
+  - name: Apply kube flannel
     command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
     become: false
 
-  handlers:
-    - name: docker status
-      service: name=docker state=started
+  # ssh
+  - name: Include ssh vault vars
+    include_vars:
+      file: vault.yaml
 
+  - name: Copy ssh key id_rsa
+    copy:
+      content: "{{ mbp_id_rsa }}"
+      dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa
+      mode: 0600
+      owner: "{{ ansible_user }}"
+    no_log: True
 
+  - name: Copy ssh key id_rsa.pub
+    copy:
+      content: "{{ mbp_id_rsa_pub }}"
+      dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa.pub
+      mode: 0644
+      owner: "{{ ansible_user }}"
+    no_log: True
+
+  - name: Add id_host to ssh config
+    lineinfile:
+      line: " IdentityFile /home/{{ ansible_user }}/.ssh/mbp_id_rsa"
+      dest: /home/{{ ansible_user }}/.ssh/config
+      mode: 0644
+      owner: "{{ ansible_user }}"
+    no_log: True
+
+  - name: Add github to known_hosts
+    lineinfile:
+      line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+      dest: /home/{{ ansible_user }}/.ssh/known_hosts
+      mode: 0644
+      owner: "{{ ansible_user }}"
+      create: True
+    no_log: True
+
+  # git
+  - name: Install git-core
+    apt:
+      name: git-core
+    no_log: True
+
+  - name: Configure git
+    command: "{{ item.command }}"
+    loop:
+      - { command: "git config --global core.editor vim" }
+      - { command: "git config --global core.pager less" }
+    no_log: True
+
+  - name: Add .gitconfig
+    template:
+      src: gitconfig
+      dest: /home/{{ ansible_user }}/.gitconfig
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: 0644
+    no_log: True
