@@ -1,11 +1,9 @@
 ---
   - name: Update apt sources.list
-    command: echo 'deb http://ftp.plusline.net/debian/ unstable main contrib non-free' > /etc/apt/sources.list
-
-  - name: Update all packages to their latest version
-    apt:
-      name: "*"
-      state: latest
+    apt_repository:
+     repo: deb http://fr.archive.ubuntu.com/ubuntu  bionic main restricted universe multiverse
+     state: present
+     update_cache: True
 
   - name: Install packages that allow apt to be used over https
     apt:
