@@ -2,6 +2,7 @@
 - hosts: '*'
   become: True
   roles:
+    - apt
     - docker
     - kube
     - git

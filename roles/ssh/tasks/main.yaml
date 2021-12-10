@@ -1,5 +1,5 @@
 # ssh
-- name: Include ssh vault vars
+- name: Include ssh vault
   include_vars:
     file: vault.yaml
 

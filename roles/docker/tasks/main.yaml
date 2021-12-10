@@ -1,42 +1,17 @@
 #docker
-- name: Install system packages
-  apt:
-    name:
-    - net-tools
-    - iputils-ping
-    - dnsutils
-    - curl
-    - jq
-
-- name: Install packages that allow apt to be used over HTTPS
-  apt:
-    name: "{{ packages }}"
-    state: present
-    update_cache: yes
-  vars:
-    packages:
-    - apt-transport-https
-    - ca-certificates
-    - gnupg-agent
-    - software-properties-common
-
-- name: Add an apt signing key for Docker
+- name: Add docker apt key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add apt repository for stable version
+- name: Add docker apt repository
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
     state: present
 
-- name: Install docker and its dependencies
+- name: Install docker
   apt:
-    name: "{{ packages }}"
-    state: present
-    update_cache: yes
-  vars:
-    packages:
+    name:
     - docker-ce
     - docker-ce-cli
     - containerd.io
@@ -65,7 +40,7 @@
     line: "{ \"exec-opts\": [\"native.cgroupdriver=systemd\"] }"
     create: yes
 
-- name: Start docker service
+- name: Start docker
   service:
     name: docker
     state: restarted

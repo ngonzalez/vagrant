@@ -1,0 +1,19 @@
+---
+  - name: Install packages that allow apt to be used over HTTPS
+    apt:
+      name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - software-properties-common
+      - lsb-release
+
+  - name: Install system packages
+    apt:
+      name:
+      - net-tools
+      - iputils-ping
+      - dnsutils
+      - curl
+      - jq
+      - htop
