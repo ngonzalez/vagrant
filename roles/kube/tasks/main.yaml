@@ -1,4 +1,5 @@
 # kube
+---
 - name: Add an apt signing key for Kubernetes
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -75,3 +76,10 @@
 - name: Apply kube flannel
   command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
   become: false
+
+- name: Add k8s.local to hosts file
+  lineinfile:
+    line: "192.168.56.10 k8s.local"
+    dest: /etc/hosts
+    mode: 0644
+    owner: "{{ ansible_user }}"

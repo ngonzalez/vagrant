@@ -1,0 +1,42 @@
+# admin
+---
+- name: Install system packages
+  apt:
+    name:
+    - curl
+    - dnsutils
+    - htop
+    - iputils-ping
+    - jq
+    - net-tools
+
+- name: Checkout admin repository
+  become_user: "{{ ansible_user }}"
+  git:
+    repo: "{{ admin_repository }}"
+    dest: "{{ admin_path }}"
+    version: app
+
+- name: Create k8s namespace
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f namespaces/k8s.yaml
+
+- name: Create app Deployment
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f deploy/app.yaml
+
+- name: Create app Service
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f service/app.yaml
+
+- name: Create app Ingress
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f ingress/app.yaml
