@@ -9,6 +9,7 @@ Vagrant.configure('2') do |config|
   config.vm.define 'node-1' do |master|
     master.vm.box = 'hashicorp/bionic64'
     master.vm.network 'private_network', ip: '192.168.56.10'
+    config.vm.network 'forwarded_port', guest: 80, host: 80, protocol: 'tcp'
     master.vm.hostname = 'node-1'
     master.vm.provision 'ansible' do |ansible|
       ansible.playbook = 'playbook.yaml'
