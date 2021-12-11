@@ -10,7 +10,32 @@
     - jq
     - net-tools
 
-- name: Checkout admin repository
+- name: Checkout admin repository db branch
+  become_user: "{{ ansible_user }}"
+  git:
+    repo: "{{ admin_repository }}"
+    dest: "{{ admin_path }}"
+    version: db
+
+- name: Create k8s namespace
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f namespaces/k8s.yaml
+
+- name: Create db Deployment
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f deploy/db.yaml
+
+- name: Create db Service
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f service/db.yaml
+
+- name: Checkout admin repository app branch
   become_user: "{{ ansible_user }}"
   git:
     repo: "{{ admin_repository }}"
@@ -40,3 +65,4 @@
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f ingress/app.yaml
+
