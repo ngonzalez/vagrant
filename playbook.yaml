@@ -2,10 +2,10 @@
 - hosts: '*'
   become: True
   roles:
-    # - apt
-    # - docker
-    # - kube
-    # - git
-    # - ssh
-    # - nginx-ingress
+    - apt
+    - docker
+    - kube
+    - git
+    - ssh
+    - nginx-ingress
     - admin
