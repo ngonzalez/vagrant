@@ -1,15 +1,18 @@
 #docker
 - name: Add docker apt key
+  tags: docker
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
 - name: Add docker apt repository
+  tags: docker
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
     state: present
 
 - name: Install docker
+  tags: docker
   apt:
     name:
     - docker-ce
@@ -17,11 +20,13 @@
     - containerd.io
 
 - name: Add vagrant user to docker group
+  tags: docker
   user:
     name: vagrant
     group: docker
 
 - name: Remove swapfile from /etc/fstab
+  tags: docker
   mount:
     name: "{{ item }}"
     fstype: swap
@@ -31,16 +36,19 @@
     - none
 
 - name: Disable swap
+  tags: docker
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
 
 - name: Configure docker daemon
+  tags: docker
   lineinfile:
     path: /etc/docker/daemon.json
     line: "{ \"exec-opts\": [\"native.cgroupdriver=systemd\"] }"
     create: yes
 
 - name: Start docker
+  tags: docker
   service:
     name: docker
     state: restarted

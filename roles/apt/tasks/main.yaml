@@ -1,15 +1,17 @@
 ---
-  - name: Update apt sources.list
-    apt_repository:
-     repo: deb http://fr.archive.ubuntu.com/ubuntu  bionic main restricted universe multiverse
-     state: present
-     update_cache: True
+- name: Update apt sources.list
+  tags: apt
+  apt_repository:
+   repo: deb http://fr.archive.ubuntu.com/ubuntu  bionic main restricted universe multiverse
+   state: present
+   update_cache: True
 
-  - name: Install packages that allow apt to be used over https
-    apt:
-      name:
-      - apt-transport-https
-      - ca-certificates
-      - gnupg
-      - software-properties-common
-      - lsb-release
+- name: Install packages that allow apt to be used over https
+  tags: apt
+  apt:
+    name:
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - software-properties-common
+    - lsb-release

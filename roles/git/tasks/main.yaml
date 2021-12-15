@@ -1,15 +1,18 @@
 # git
 - name: Install git-core
+  tags: git
   apt:
     name: git-core
 
 - name: Configure git
+  tags: git
   command: "{{ item.command }}"
   loop:
     - { command: "git config --global core.editor vim" }
     - { command: "git config --global core.pager less" }
 
 - name: Add .gitconfig
+  tags: git
   template:
     src: gitconfig
     dest: /home/{{ ansible_user }}/.gitconfig
