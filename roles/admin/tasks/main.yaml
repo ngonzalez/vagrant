@@ -44,6 +44,14 @@
     state: directory
     mode: 0755
 
+- name: Change data folder ownership and permissions
+  file:
+    path: /data
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: yes
+  no_log: True
+
 - name: Create storage class
   become_user: "{{ ansible_user }}"
   shell:
