@@ -55,11 +55,11 @@
   become: false
 
 - name: Install the Tigera Calico operator and custom resource definitions
-  command: kubectl apply -f https://docs.projectcalico.org/master/manifests/tigera-operator.yaml
+  command: kubectl create -f https://docs.projectcalico.org/master/manifests/tigera-operator.yaml
   become: false
 
 - name: Install Calico by creating the necessary custom resource
-  command: kubectl apply -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
+  command: kubectl create -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
   become: false
 
 - name: Create kube flannel run directory
