@@ -59,7 +59,7 @@
   become: false
 
 - name: Install Calico by creating the necessary custom resource
-  command: kubectl create -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
+  command: kubectl create -f https://gist.githubusercontent.com/ngonzalez/2982b3115ed14982318088cf4cc8a415/raw/02f882a2a5570af59dcc36ebc512f2727537b1a3/custom-resources.yaml
   become: false
 
 - name: Create kube flannel run directory
