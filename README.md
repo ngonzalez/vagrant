@@ -14,7 +14,7 @@
 </ul>
 
 ```shell
-vagrant up node-1 --privision
+vagrant up node-1 --provision
 ```
 
 ```shell
