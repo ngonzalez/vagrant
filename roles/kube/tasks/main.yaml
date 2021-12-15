@@ -54,8 +54,12 @@
   command: kubectl taint nodes --all node-role.kubernetes.io/master-
   become: false
 
-- name: Install Tigera Calico operator
-  command: kubectl create -f https://docs.projectcalico.org/master/manifests/tigera-operator.yaml
+- name: Install the Tigera Calico operator and custom resource definitions
+  command: kubectl apply -f https://docs.projectcalico.org/master/manifests/tigera-operator.yaml
+  become: false
+
+- name: Install Calico by creating the necessary custom resource
+  command: kubectl apply -f https://docs.projectcalico.org/master/manifests/custom-resources.yaml
   become: false
 
 - name: Create kube flannel run directory
