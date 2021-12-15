@@ -39,7 +39,6 @@
 
 # app
 - name: Create data folder
-  become_user: "{{ ansible_user }}"
   ansible.builtin.file:
     path: /data
     state: directory
