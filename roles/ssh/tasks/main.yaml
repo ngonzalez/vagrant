@@ -40,6 +40,7 @@
     dest: /home/{{ ansible_user }}/.ssh/authorized_keys
     mode: 0644
     owner: "{{ ansible_user }}"
+  no_log: True
 
 - name: Add github to known_hosts
   lineinfile:
