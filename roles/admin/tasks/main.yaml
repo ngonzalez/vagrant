@@ -38,6 +38,31 @@
     cmd: kubectl apply -f service/db.yaml
 
 # app
+- name: Create data folder
+  become_user: "{{ ansible_user }}"
+  ansible.builtin.file:
+    path: /data
+    state: directory
+    mode: 0755
+
+- name: Create storage class
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/storage-class.yaml
+
+- name: Create persistent volume
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/persistent-volume.yaml
+
+- name: Create persistent volume claim
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/persistent-volume-claim.yaml
+
 - name: Create app Deployment
   become_user: "{{ ansible_user }}"
   shell:
@@ -55,4 +80,3 @@
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f ingress/app.yaml
-
