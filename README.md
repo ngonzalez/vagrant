@@ -18,5 +18,9 @@ vagrant up node-1 --provision
 ```
 
 ```shell
-vagrant destroy
+vagrant destroy -f
+```
+
+```shell
+ansible-playbook -i inventory.yaml playbook.yaml --flush-cache --diff -vv --limit "virtualbox"
 ```
