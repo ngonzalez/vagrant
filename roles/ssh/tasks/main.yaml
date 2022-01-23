@@ -1,24 +1,25 @@
 # ssh
+---
 - name: Include ssh vault
   tags: ssh
   include_vars:
     file: vault.yaml
   no_log: True
 
-- name: Copy ssh key id_rsa
+- name: Copy host private key
   tags: ssh
   copy:
     content: "{{ mbp_id_rsa }}"
-    dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa
+    dest: "{{ ssh_private_key }}"
     mode: 0600
     owner: "{{ ansible_user }}"
   no_log: True
 
-- name: Copy ssh key id_rsa.pub
+- name: Copy host public key
   tags: ssh
   copy:
     content: "{{ mbp_id_rsa_pub }}"
-    dest: /home/{{ ansible_user}}/.ssh/mbp_id_rsa.pub
+    dest: "{{ ssh_public_key }}"
     mode: 0644
     owner: "{{ ansible_user }}"
   no_log: True
@@ -26,36 +27,34 @@
 - name: Create ssh config
   tags: ssh
   file:
-    path: /home/{{ ansible_user }}/.ssh/config
+    path: "{{ ssh_config }}"
     state: touch
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0644
   no_log: True
 
-- name: Add mbp_id_rsa to ssh config
+- name: Add host private key to ssh config
   tags: ssh
   lineinfile:
-    line: " IdentityFile /home/{{ ansible_user }}/.ssh/mbp_id_rsa"
-    dest: /home/{{ ansible_user }}/.ssh/config
+    line: " IdentityFile {{ ssh_private_key }}"
+    dest: "{{ ssh_config }}"
     mode: 0644
     owner: "{{ ansible_user }}"
   no_log: True
 
-- name: Add mbp_id_rsa_pub to authorized_keys
-  tags: ssh
-  lineinfile:
-    line: "{{ mbp_id_rsa_pub }}"
-    dest: /home/{{ ansible_user }}/.ssh/authorized_keys
-    mode: 0644
-    owner: "{{ ansible_user }}"
+- name: Set authorized key took from file
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key:  "{{ lookup('file', '/Users/ngonzalez/.ssh/id_rsa.pub') }}"
   no_log: True
 
 - name: Add github to known_hosts
   tags: ssh
   lineinfile:
     line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
-    dest: /home/{{ ansible_user }}/.ssh/known_hosts
+    dest: "{{ ssh_known_hosts }}"
     mode: 0644
     owner: "{{ ansible_user }}"
     create: True
