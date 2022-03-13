@@ -24,3 +24,15 @@ vagrant destroy -f
 ```shell
 ansible-playbook -i inventory.yaml playbook.yaml --flush-cache --diff -vv --limit "virtualbox"
 ```
+
+#### Known issues:
+
+`VBoxManage: error: VBoxNetAdpCtl: Error while adding new interface: failed to open /dev/vboxnetctl: No such file or directory`
+
+<b>Solution:</b>
+
+```shell
+brew cask reinstall virtualbox
+brew cask reinstall vagrant
+vagrant plugin update
+```
