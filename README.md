@@ -25,19 +25,25 @@ vagrant up node-1 --provision
 vagrant destroy -f
 ```
 
+#### SSH into the machine
+
+```shell
+vagrant ssh
+```
+
 #### Run Ansible Playbook manually
 
 ```shell
 ansible-playbook -i inventory.yaml playbook.yaml --flush-cache --diff -vv --limit "virtualbox"
 ```
 
-#### Known issues:
+#### Known issues
 
 ```shell
 VBoxManage: error: VBoxNetAdpCtl: Error while adding new interface: failed to open /dev/vboxnetctl: No such file or directory
 ```
 
-<b>Solutions:</b>
+<b>Solution:</b>
 
 ```shell
 brew cask reinstall virtualbox
