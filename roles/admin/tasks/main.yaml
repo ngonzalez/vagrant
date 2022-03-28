@@ -84,43 +84,6 @@
     cmd: kubectl apply -f service/db.yaml
 
 # app
-- name: Create data folder
-  tags: admin
-  ansible.builtin.file:
-    path: /data
-    state: directory
-    mode: 0755
-
-- name: Change data folder ownership and permissions
-  tags: admin
-  file:
-    path: /data
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    recurse: yes
-  no_log: True
-
-- name: Create storage class
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f storage/storage-class.yaml
-
-- name: Create persistent volume
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f storage/persistent-volume.yaml
-
-- name: Create persistent volume claim
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f storage/persistent-volume-claim.yaml
-
 - name: Create app Deployment
   tags: admin
   become_user: "{{ ansible_user }}"
