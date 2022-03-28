@@ -88,7 +88,7 @@
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc db-loadbalancer -p '{"spec":{"externalIPs":["{{ ansible_host }}"]}}'
+    cmd:  kubectl -n k8s patch svc database-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
 
 # app
 - name: Create app Deployment
@@ -110,4 +110,4 @@
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc app-loadbalancer -p '{"spec":{"externalIPs":["{{ ansible_host }}"]}}'
+    cmd:  kubectl -n k8s patch svc app-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'

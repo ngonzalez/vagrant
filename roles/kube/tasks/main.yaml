@@ -31,8 +31,8 @@
 
 - name: Initialize the Kubernetes cluster
   tags: kubernetes
-  command: kubeadm init --apiserver-advertise-address {{ ansible_host }} \
-                        --apiserver-cert-extra-sans {{ ansible_host }} \
+  command: kubeadm init --apiserver-advertise-address 192.168.56.10 \
+                        --apiserver-cert-extra-sans 192.168.56.10 \
                         --pod-network-cidr 10.244.0.0/16 \
                         --node-name node-1
 
