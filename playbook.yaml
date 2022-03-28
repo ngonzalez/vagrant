@@ -7,5 +7,4 @@
     - kube
     - git
     - ssh
-    - nginx-ingress
     - admin

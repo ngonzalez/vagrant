@@ -27,6 +27,47 @@
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f namespace/k8s.yaml
 
+# nginx
+- name: Include nginx vault vars
+  include_vars:
+    file: vault_nginx.yaml
+  no_log: True
+
+- name: Copy nginx self-signed cert
+  copy:
+    content: "{{ nginx_self_signed_crt }}"
+    dest: "{{ nginx_cert_path }}"
+    mode: 0644
+    owner: "{{ ansible_user }}"
+  no_log: True
+
+- name: Copy nginx self-signed key
+  copy:
+    content: "{{ nginx_self_signed_key }}"
+    dest: "{{ nginx_key_path }}"
+    mode: 0644
+    owner: "{{ ansible_user }}"
+  no_log: True
+
+- name: Create tls secret
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl -n k8s create secret tls k8s-tls-secret --key {{ nginx_key_path }} --cert {{ nginx_cert_path }}
+
+- name: Remove nginx self-signed cert
+  file:
+    path: "{{ nginx_self_signed_crt }}"
+    state: absent
+  no_log: True
+
+- name: Remove nginx self-signed key
+  file:
+    path: "{{ nginx_self_signed_key }}"
+    state: absent
+  no_log: True
+
 # database
 - name: Create db Deployment
   tags: admin
@@ -93,10 +134,3 @@
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f service/app.yaml
-
-- name: Create app Ingress
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f ingress/app.yaml
