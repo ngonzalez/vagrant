@@ -76,12 +76,19 @@
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f deploy/db.yaml
 
-- name: Create db Service
+- name: Create db loadbalancer
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f service/db.yaml
+
+- name: Set db loadbalancer external IP
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd:  kubectl -n k8s patch svc db-loadbalancer -p '{"spec":{"externalIPs":["{{ ansible_host }}"]}}'
 
 # app
 - name: Create app Deployment
@@ -91,9 +98,16 @@
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f deploy/app.yaml
 
-- name: Create app Service
+- name: Create app loadbalancer
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f service/app.yaml
+
+- name: Set app loadbalancer external IP
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd:  kubectl -n k8s patch svc app-loadbalancer -p '{"spec":{"externalIPs":["{{ ansible_host }}"]}}'
