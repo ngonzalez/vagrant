@@ -13,7 +13,6 @@ Vagrant.configure('2') do |config|
     config.vm.network 'forwarded_port', guest: 443, host: 443, protocol: 'tcp'
     config.vm.network 'forwarded_port', guest: 5432, host: 5432, protocol: 'tcp'
     config.vm.network 'forwarded_port', guest: 6379, host: 6379, protocol: 'tcp'
-    master.vm.hostname = 'kubernetes.docker.internal'
     master.vm.provision 'ansible' do |ansible|
       ansible.playbook = 'playbook.yaml'
     end

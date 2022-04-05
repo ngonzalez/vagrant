@@ -1,0 +1,9 @@
+---
+- name: Add link12.ddns.net to /etc/hosts file
+  tags: etchosts
+  lineinfile:
+    dest: "/etc/hosts"
+    line: "192.168.56.10 link12.ddns.net node-1"
+    state: present
+    backup: yes
+  no_log: True
