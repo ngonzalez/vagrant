@@ -28,6 +28,39 @@
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f namespace/k8s.yaml
 
+# persistent volumes
+- name: Create data folder
+  ansible.builtin.file:
+    path: /data
+    state: directory
+    mode: 0755
+
+- name: Change data folder ownership and permissions
+  file:
+    path: /data
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: yes
+  no_log: True
+
+- name: Create storage class
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/storage-class.yaml
+
+- name: Create persistent volume
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/persistent-volume.yaml
+
+- name: Create persistent volume claim
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f storage/persistent-volume-claim.yaml
+
 # database
 - name: Create database Deployment
   tags: admin
