@@ -93,3 +93,25 @@
   shell:
     chdir: "{{ admin_path }}"
     cmd:  kubectl -n k8s patch svc frontend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
+
+# import
+- name: Create import Deployment
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f deploy/import.yaml
+
+- name: Create import loadbalancer
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f service/import.yaml
+
+- name: Set import loadbalancer external IP
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd:  kubectl -n k8s patch svc import-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
