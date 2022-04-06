@@ -18,7 +18,7 @@
   git:
     repo: "{{ admin_repository }}"
     dest: "{{ admin_path }}"
-    version: main
+    version: app-rename
 
 # namespace
 - name: Create k8s namespace
@@ -29,21 +29,21 @@
     cmd: kubectl apply -f namespace/k8s.yaml
 
 # database
-- name: Create db Deployment
+- name: Create database Deployment
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f deploy/db.yaml
+    cmd: kubectl apply -f deploy/database.yaml
 
-- name: Create db loadbalancer
+- name: Create database loadbalancer
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f service/db.yaml
+    cmd: kubectl apply -f service/database.yaml
 
-- name: Set db loadbalancer external IP
+- name: Set database loadbalancer external IP
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
