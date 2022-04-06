@@ -11,6 +11,7 @@
     - jq
     - net-tools
 
+# git checkout
 - name: Checkout admin repository
   tags: admin
   become_user: "{{ ansible_user }}"
@@ -49,24 +50,46 @@
     chdir: "{{ admin_path }}"
     cmd:  kubectl -n k8s patch svc database-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
 
-# app
-- name: Create app Deployment
+# backend
+- name: Create backend Deployment
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f deploy/app.yaml
+    cmd: kubectl apply -f deploy/backend.yaml
 
-- name: Create app loadbalancer
+- name: Create backend loadbalancer
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f service/app.yaml
+    cmd: kubectl apply -f service/backend.yaml
 
-- name: Set app loadbalancer external IP
+- name: Set backend loadbalancer external IP
   tags: admin
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc app-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
+    cmd:  kubectl -n k8s patch svc backend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
+
+# frontend
+- name: Create frontend Deployment
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f deploy/frontend.yaml
+
+- name: Create frontend loadbalancer
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd: kubectl apply -f service/frontend.yaml
+
+- name: Set frontend loadbalancer external IP
+  tags: admin
+  become_user: "{{ ansible_user }}"
+  shell:
+    chdir: "{{ admin_path }}"
+    cmd:  kubectl -n k8s patch svc frontend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
