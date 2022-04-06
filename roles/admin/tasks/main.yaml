@@ -18,7 +18,7 @@
   git:
     repo: "{{ admin_repository }}"
     dest: "{{ admin_path }}"
-    version: app-rename
+    version: main
 
 # namespace
 - name: Create k8s namespace
