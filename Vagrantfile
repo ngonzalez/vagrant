@@ -2,7 +2,7 @@ Vagrant.configure('2') do |config|
   config.ssh.insert_key = false
 
   config.vm.provider 'virtualbox' do |v|
-    v.memory = 8 * 1024
+    v.memory = 12 * 1024
     v.cpus = 2
   end
 

@@ -30,12 +30,14 @@
 
 # persistent volumes
 - name: Create data folder
+  tags: data
   ansible.builtin.file:
     path: /data
     state: directory
     mode: 0755
 
 - name: Change data folder ownership and permissions
+  tags: data
   file:
     path: /data
     owner: "{{ ansible_user }}"
@@ -44,18 +46,21 @@
   no_log: True
 
 - name: Create storage class
+  tags: data
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f storage/storage-class.yaml
 
 - name: Create persistent volume
+  tags: data
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f storage/persistent-volume.yaml
 
 - name: Create persistent volume claim
+  tags: data
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
@@ -63,21 +68,21 @@
 
 # database
 - name: Create database Deployment
-  tags: admin
+  tags: database
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f deploy/database.yaml
 
 - name: Create database loadbalancer
-  tags: admin
+  tags: database
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f service/database.yaml
 
 - name: Set database loadbalancer external IP
-  tags: admin
+  tags: database
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
@@ -85,66 +90,22 @@
 
 # backend
 - name: Create backend Deployment
-  tags: admin
+  tags: backend
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f deploy/backend.yaml
 
 - name: Create backend loadbalancer
-  tags: admin
+  tags: backend
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd: kubectl apply -f service/backend.yaml
 
 - name: Set backend loadbalancer external IP
-  tags: admin
+  tags: backend
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
     cmd:  kubectl -n k8s patch svc backend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
-
-# frontend
-- name: Create frontend Deployment
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f deploy/frontend.yaml
-
-- name: Create frontend loadbalancer
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f service/frontend.yaml
-
-- name: Set frontend loadbalancer external IP
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc frontend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
-
-# import
-- name: Create import Deployment
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f deploy/import.yaml
-
-- name: Create import loadbalancer
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f service/import.yaml
-
-- name: Set import loadbalancer external IP
-  tags: admin
-  become_user: "{{ ansible_user }}"
-  shell:
-    chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc import-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
