@@ -94,18 +94,18 @@
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f deploy/backend.yaml
+    cmd: kubectl apply -f deploy/app.yaml
 
 - name: Create app loadbalancer
   tags: app
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd: kubectl apply -f service/backend.yaml
+    cmd: kubectl apply -f service/app.yaml
 
 - name: Set app loadbalancer external IP
   tags: app
   become_user: "{{ ansible_user }}"
   shell:
     chdir: "{{ admin_path }}"
-    cmd:  kubectl -n k8s patch svc backend-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
+    cmd:  kubectl -n k8s patch svc app-loadbalancer -p '{"spec":{"externalIPs":["192.168.56.10"]}}'
