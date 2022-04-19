@@ -47,15 +47,5 @@
   authorized_key:
     user: "{{ ansible_user }}"
     state: present
-    key:  "{{ lookup('file', '/Users/ngonzalez/.ssh/id_rsa.pub') }}"
-  no_log: True
-
-- name: Add github to known_hosts
-  tags: ssh
-  lineinfile:
-    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
-    dest: "{{ ssh_known_hosts }}"
-    mode: 0644
-    owner: "{{ ansible_user }}"
-    create: True
+    key: "{{ mbp_id_rsa_pub }}"
   no_log: True
