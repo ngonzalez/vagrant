@@ -1,5 +1,4 @@
 ---
 ssh_config: /home/{{ ansible_user }}/.ssh/config
-ssh_known_hosts: /home/{{ ansible_user }}/.ssh/known_hosts
 ssh_private_key: /home/{{ ansible_user}}/.ssh/id_rsa
 ssh_public_key: /home/{{ ansible_user}}/.ssh/id_rsa.pub
