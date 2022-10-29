@@ -28,20 +28,12 @@ vagrant destroy -f
 vagrant ssh
 ```
 
+#### Network
+```shell
+echo 1 > /proc/sys/net/ipv4/ip_forward
+````
+
 #### Run Ansible Playbook manually
 ```shell
-ansible-playbook -i inventory.yaml virtualbox.yml --flush-cache --diff -vv --limit "vagrant-*"
-```
-
-#### Known issues
-```shell
-VBoxManage: error: VBoxNetAdpCtl: Error while adding new interface: failed to open /dev/vboxnetctl: No such file or directory
-```
-
-<b>Solution:</b>
-
-```shell
-brew cask reinstall virtualbox
-brew cask reinstall vagrant
-vagrant plugin update
+ansible-playbook -i inventory.yaml playbook.yaml --flush-cache --diff -vv --limit "virtualbox"
 ```
